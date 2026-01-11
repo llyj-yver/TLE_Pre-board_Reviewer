@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../database/exam_db.dart';
@@ -18,6 +19,10 @@ class ExamWidget extends StatefulWidget {
 }
 
 class _ExamWidgetState extends State<ExamWidget> {
+  // ==================== CONFIGURABLE TIMER ====================
+  // Set exam duration in minutes (default: 30 minutes)
+  final int examDurationMinutes = 30;
+  
   // Apple Calculator inspired color palette
   final Color bgDark = AppColors.bgDark;
   final Color cardDark = AppColors.cardDark;
@@ -36,6 +41,9 @@ class _ExamWidgetState extends State<ExamWidget> {
 
   late DateTime startTime;
   Duration timeTaken = Duration.zero;
+  
+  Timer? countdownTimer;
+  Duration remainingTime = Duration.zero;
 
   @override
   void initState() {
@@ -46,10 +54,38 @@ class _ExamWidgetState extends State<ExamWidget> {
     examData.shuffle(Random());
 
     startTime = DateTime.now();
+    remainingTime = Duration(minutes: examDurationMinutes);
+    
+    // Start countdown timer
+    startCountdownTimer();
+  }
+
+  @override
+  void dispose() {
+    countdownTimer?.cancel();
+    super.dispose();
+  }
+
+  // ==================== COUNTDOWN TIMER ====================
+  void startCountdownTimer() {
+    countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        if (remainingTime.inSeconds > 0) {
+          remainingTime = remainingTime - const Duration(seconds: 1);
+        } else {
+          timer.cancel();
+          if (!submitted) {
+            submitExam();
+          }
+        }
+      });
+    });
   }
 
   // ==================== SUBMIT EXAM ====================
   Future<void> submitExam() async {
+    countdownTimer?.cancel();
+    
     DateTime endTime = DateTime.now();
     timeTaken = endTime.difference(startTime);
 
@@ -84,8 +120,17 @@ class _ExamWidgetState extends State<ExamWidget> {
       submitted = false;
       score = 0;
       startTime = DateTime.now();
+      remainingTime = Duration(minutes: examDurationMinutes);
       examData.shuffle(Random());
     });
+    startCountdownTimer();
+  }
+
+  // ==================== FORMAT TIME ====================
+  String formatRemainingTime() {
+    int minutes = remainingTime.inMinutes;
+    int seconds = remainingTime.inSeconds % 60;
+    return "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
   }
 
   @override
@@ -96,7 +141,7 @@ class _ExamWidgetState extends State<ExamWidget> {
         backgroundColor: bgDark,
         elevation: 0,
         leading: IconButton(
-          icon:  Icon(Icons.arrow_back_ios, color: textWhite, size: 20),
+          icon: Icon(Icons.arrow_back_ios, color: textWhite, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -109,6 +154,50 @@ class _ExamWidgetState extends State<ExamWidget> {
           ),
         ),
         centerTitle: true,
+        actions: [
+          if (!submitted)
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: Center(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: remainingTime.inMinutes < 5
+                        ? incorrectRed.withOpacity(0.2)
+                        : accentGray.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.timer_outlined,
+                        color: remainingTime.inMinutes < 5
+                            ? incorrectRed
+                            : textGray,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        formatRemainingTime(),
+                        style: TextStyle(
+                          color: remainingTime.inMinutes < 5
+                              ? incorrectRed
+                              : textWhite,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../database/exam_db.dart';
-import '../utils/app_colors.dart';
+import '../../database/exam_db.dart';
+import '../../utils/app_colors.dart';
 
 class ExamScoreComparisonLineChart extends StatelessWidget {
   const ExamScoreComparisonLineChart({super.key});

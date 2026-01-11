@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reviwer_app/screens/review_materials.dart';
 import 'screens/assessment_screen.dart';
 import 'screens/pre_board_screen.dart';
 import 'screens/statistics_screen.dart';
@@ -46,13 +47,19 @@ class HomePage extends StatelessWidget {
                   letterSpacing: -0.5,
                 ),
               ),
-              
+
               // Main Navigation Cards - Centered
               Expanded(
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      _buildMinimalCard(
+                        context,
+                        icon: Icons.assignment_outlined,
+                        title: 'Review Materials',
+                        screen: const TestSelectionScreen(),
+                      ),
                       _buildMinimalCard(
                         context,
                         icon: Icons.assignment_outlined,
