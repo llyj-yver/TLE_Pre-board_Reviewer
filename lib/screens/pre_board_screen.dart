@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widgets/exam_widget.dart';
-import '../data/questions_data.dart';
 
 class PreBoardScreen extends StatelessWidget {
   const PreBoardScreen({super.key});
@@ -8,7 +7,10 @@ class PreBoardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ExamWidget(
-      questions: tlePreBoardData,examType: "pre-board" // pass your 2D list here
+      csvPath: 'assets/exam/PRE_BOARD.csv', // ✅ your CSV file
+      examType: 'pre-board',
+      numberOfQuestions: 15, // Control how many questions to display
+      examDurationMinutes: 20, // Control time limit in minutes
     );
   }
 }

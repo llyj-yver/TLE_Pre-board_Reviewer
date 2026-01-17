@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../database/exam_db.dart';
-import '../../utils/app_colors.dart';
 
 class ExamScoreComparisonLineChart extends StatelessWidget {
   const ExamScoreComparisonLineChart({super.key});
@@ -29,7 +28,7 @@ class ExamScoreComparisonLineChart extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
             child: CircularProgressIndicator(
-              color: AppColors.accentOrange,
+              color: const Color(0xFF5624D0),
               strokeWidth: 3,
             ),
           );
@@ -41,17 +40,17 @@ class ExamScoreComparisonLineChart extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.analytics_outlined,
-                  size: 64,
-                  color: AppColors.textGray,
+                  Icons.insert_chart_outlined_rounded,
+                  size: 80,
+                  color: Colors.grey[300],
                 ),
                 const SizedBox(height: 16),
                 Text(
                   "No data available",
                   style: TextStyle(
-                    color: AppColors.textGray,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[600],
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
@@ -67,18 +66,25 @@ class ExamScoreComparisonLineChart extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.timeline,
-                  size: 64,
-                  color: AppColors.textGray,
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF5624D0).withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.analytics_outlined,
+                    size: 64,
+                    color: const Color(0xFF5624D0),
+                  ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 Text(
                   "Take a post-test to see comparison",
                   style: TextStyle(
-                    color: AppColors.textGray,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[700],
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
@@ -101,219 +107,339 @@ class ExamScoreComparisonLineChart extends StatelessWidget {
         maxY = (maxY + 2).ceilToDouble();
 
         return Container(
-          margin: const EdgeInsets.all(20),
-          padding: const EdgeInsets.all(20),
+          margin: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.cardDark,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.06),
+                blurRadius: 20,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Chart Title
-              Text(
-                "Score Comparison",
-                style: TextStyle(
-                  color: AppColors.textWhite,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "Pre-test vs Post-test Performance",
-                style: TextStyle(
-                  color: AppColors.textGray,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Legend
-              Row(
-                children: [
-                  _buildLegendItem("Pre-test Avg", AppColors.accentOrange),
-                  const SizedBox(width: 20),
-                  _buildLegendItem("Post-test", AppColors.correctGreen),
-                ],
-              ),
-              const SizedBox(height: 24),
-
-              // Chart
-              AspectRatio(
-                aspectRatio: 1.3,
-                child: LineChart(
-                  LineChartData(
-                    minX: 0,
-                    maxX: (postResults.length - 1).toDouble(),
-                    minY: 0,
-                    maxY: maxY,
-                    lineBarsData: [
-                      // Pre-test average line
-                      LineChartBarData(
-                        spots: preLine,
-                        isCurved: true,
-                        color: AppColors.accentOrange,
-                        barWidth: 3,
-                        dotData: const FlDotData(show: false),
-                        dashArray: [8, 4],
-                        belowBarData: BarAreaData(
-                          show: true,
-                          color: AppColors.accentOrange.withOpacity(0.1),
-                        ),
-                      ),
-                      // Post-test scores
-                      LineChartBarData(
-                        spots: postLine,
-                        isCurved: true,
-                        color: AppColors.correctGreen,
-                        barWidth: 3,
-                        dotData: FlDotData(
-                          show: true,
-                          getDotPainter: (spot, percent, barData, index) {
-                            return FlDotCirclePainter(
-                              radius: 5,
-                              color: AppColors.correctGreen,
-                              strokeWidth: 2,
-                              strokeColor: AppColors.bgDark,
-                            );
-                          },
-                        ),
-                        belowBarData: BarAreaData(
-                          show: true,
-                          color: AppColors.correctGreen.withOpacity(0.1),
-                        ),
-                      ),
+              // Header Section
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      const Color(0xFF5624D0),
+                      const Color(0xFF5624D0).withOpacity(0.85),
                     ],
-                    titlesData: FlTitlesData(
-                      rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 32,
-                          interval: 1,
-                          getTitlesWidget: (value, meta) {
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 8),
-                              child: Text(
-                                "#${value.toInt() + 1}",
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.trending_up_rounded,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Performance Analytics",
                                 style: TextStyle(
-                                  color: AppColors.textGray,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: -0.5,
                                 ),
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 40,
-                          interval: maxY > 10 ? (maxY / 5).ceilToDouble() : 2,
-                          getTitlesWidget: (value, meta) {
-                            return Text(
-                              value.toInt().toString(),
-                              style: TextStyle(
-                                color: AppColors.textGray,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
+                              const SizedBox(height: 4),
+                              Text(
+                                "Pre-test vs Post-test Comparison",
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.9),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
-                            );
-                          },
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                    gridData: FlGridData(
-                      show: true,
-                      drawVerticalLine: true,
-                      horizontalInterval: maxY > 10 ? (maxY / 5).ceilToDouble() : 2,
-                      verticalInterval: 1,
-                      getDrawingHorizontalLine: (value) {
-                        return FlLine(
-                          color: AppColors.accentGray.withOpacity(0.2),
-                          strokeWidth: 1,
-                        );
-                      },
-                      getDrawingVerticalLine: (value) {
-                        return FlLine(
-                          color: AppColors.accentGray.withOpacity(0.2),
-                          strokeWidth: 1,
-                        );
-                      },
-                    ),
-                    borderData: FlBorderData(
-                      show: true,
-                      border: Border.all(
-                        color: AppColors.accentGray.withOpacity(0.3),
-                        width: 1,
-                      ),
-                    ),
-                    lineTouchData: LineTouchData(
-                      enabled: true,
-                      touchTooltipData: LineTouchTooltipData(
-                        getTooltipColor: (touchedSpot) => AppColors.cardDark,
-                        tooltipBorderRadius: BorderRadius.circular(8),
-                        tooltipPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        getTooltipItems: (touchedSpots) {
-                          return touchedSpots.map((spot) {
-                            final isPreTest = spot.barIndex == 0;
-                            return LineTooltipItem(
-                              '${isPreTest ? "Pre-test Avg" : "Post-test"}\n${spot.y.toInt()}',
-                              TextStyle(
-                                color: AppColors.textWhite,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            );
-                          }).toList();
-                        },
-                      ),
-                    ),
-                  ),
+                  ],
                 ),
               ),
 
-              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    // Stats Cards
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildModernStatCard(
+                            icon: Icons.school_outlined,
+                            label: "Pre-test Average",
+                            value: preAverage.toStringAsFixed(1),
+                            color: const Color(0xFF0056D2),
+                            isHighlight: false,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildModernStatCard(
+                            icon: Icons.stars_rounded,
+                            label: "Latest Score",
+                            value: postResults.last.score.toString(),
+                            color: const Color(0xFF5624D0),
+                            isHighlight: true,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildModernStatCard(
+                            icon: Icons.repeat_rounded,
+                            label: "Total Attempts",
+                            value: postResults.length.toString(),
+                            color: const Color(0xFF0056D2),
+                            isHighlight: false,
+                          ),
+                        ),
+                      ],
+                    ),
 
-              // Stats Summary
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildStatCard(
-                      "Pre-test",
-                      preAverage.toStringAsFixed(1),
-                      AppColors.accentOrange,
+                    const SizedBox(height: 32),
+
+                    // Legend
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildModernLegend("Pre-test Average", const Color(0xFF0056D2)),
+                          const SizedBox(width: 32),
+                          _buildModernLegend("Post-test Scores", const Color(0xFF5624D0)),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildStatCard(
-                      "Latest",
-                      postResults.last.score.toString(),
-                      AppColors.correctGreen,
+
+                    const SizedBox(height: 24),
+
+                    // Chart
+                    AspectRatio(
+                      aspectRatio: 1.4,
+                      child: LineChart(
+                        LineChartData(
+                          minX: 0,
+                          maxX: (postResults.length - 1).toDouble(),
+                          minY: 0,
+                          maxY: maxY,
+                          lineBarsData: [
+                            // Pre-test average line
+                            LineChartBarData(
+                              spots: preLine,
+                              isCurved: true,
+                              curveSmoothness: 0.35,
+                              color: const Color(0xFF0056D2),
+                              barWidth: 3,
+                              dotData: const FlDotData(show: false),
+                              dashArray: [8, 5],
+                              belowBarData: BarAreaData(
+                                show: true,
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    const Color(0xFF0056D2).withOpacity(0.2),
+                                    const Color(0xFF0056D2).withOpacity(0.02),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            // Post-test scores
+                            LineChartBarData(
+                              spots: postLine,
+                              isCurved: true,
+                              curveSmoothness: 0.35,
+                              color: const Color(0xFF5624D0),
+                              barWidth: 4,
+                              dotData: FlDotData(
+                                show: true,
+                                getDotPainter: (spot, percent, barData, index) {
+                                  return FlDotCirclePainter(
+                                    radius: 6,
+                                    color: Colors.white,
+                                    strokeWidth: 3,
+                                    strokeColor: const Color(0xFF5624D0),
+                                  );
+                                },
+                              ),
+                              belowBarData: BarAreaData(
+                                show: true,
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    const Color(0xFF5624D0).withOpacity(0.25),
+                                    const Color(0xFF5624D0).withOpacity(0.02),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                          titlesData: FlTitlesData(
+                            rightTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            topTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                reservedSize: 40,
+                                interval: 1,
+                                getTitlesWidget: (value, meta) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 12),
+                                    child: Text(
+                                      "Test #${value.toInt() + 1}",
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                reservedSize: 45,
+                                interval: maxY > 10 ? (maxY / 5).ceilToDouble() : 2,
+                                getTitlesWidget: (value, meta) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 8),
+                                    child: Text(
+                                      value.toInt().toString(),
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          gridData: FlGridData(
+                            show: true,
+                            drawVerticalLine: false,
+                            horizontalInterval: maxY > 10 ? (maxY / 5).ceilToDouble() : 2,
+                            getDrawingHorizontalLine: (value) {
+                              return FlLine(
+                                color: Colors.grey[200],
+                                strokeWidth: 1.5,
+                              );
+                            },
+                          ),
+                          borderData: FlBorderData(
+                            show: true,
+                            border: Border(
+                              bottom: BorderSide(color: Colors.grey[300]!, width: 2),
+                              left: BorderSide(color: Colors.grey[300]!, width: 2),
+                            ),
+                          ),
+                          lineTouchData: LineTouchData(
+                            enabled: true,
+                            touchTooltipData: LineTouchTooltipData(
+                              getTooltipColor: (touchedSpot) => const Color(0xFF2D2F31),
+                              tooltipPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
+                              getTooltipItems: (touchedSpots) {
+                                return touchedSpots.map((spot) {
+                                  final isPreTest = spot.barIndex == 0;
+                                  return LineTooltipItem(
+                                    '${isPreTest ? "Pre-test Avg" : "Post-test #${spot.x.toInt() + 1}"}\n${spot.y.toInt()} points',
+                                    const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.4,
+                                    ),
+                                  );
+                                }).toList();
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildStatCard(
-                      "Attempts",
-                      postResults.length.toString(),
-                      AppColors.textGray,
-                    ),
-                  ),
-                ],
+
+                    const SizedBox(height: 16),
+
+                    // Improvement Indicator
+                    if (postResults.last.score > preAverage)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF5624D0).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: const Color(0xFF5624D0).withOpacity(0.3),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.celebration_rounded,
+                              color: const Color(0xFF5624D0),
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Great progress! +${(postResults.last.score - preAverage).toStringAsFixed(1)} points improvement",
+                              style: const TextStyle(
+                                color: Color(0xFF5624D0),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -322,12 +448,13 @@ class ExamScoreComparisonLineChart extends StatelessWidget {
     );
   }
 
-  Widget _buildLegendItem(String label, Color color) {
+  Widget _buildModernLegend(String label, Color color) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 20,
-          height: 3,
+          width: 28,
+          height: 4,
           decoration: BoxDecoration(
             color: color,
             borderRadius: BorderRadius.circular(2),
@@ -337,33 +464,45 @@ class ExamScoreComparisonLineChart extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            color: AppColors.textGray,
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
+            color: Colors.grey[700],
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildStatCard(String label, String value, Color color) {
+  Widget _buildModernStatCard({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+    required bool isHighlight,
+  }) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        color: isHighlight ? color.withOpacity(0.1) : Colors.grey[50],
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: color.withOpacity(0.3),
-          width: 1,
+          color: isHighlight ? color.withOpacity(0.3) : Colors.grey[200]!,
+          width: isHighlight ? 2 : 1.5,
         ),
       ),
       child: Column(
         children: [
+          Icon(
+            icon,
+            color: color,
+            size: 24,
+          ),
+          const SizedBox(height: 8),
           Text(
             value,
             style: TextStyle(
               color: color,
-              fontSize: 20,
+              fontSize: 26,
               fontWeight: FontWeight.w700,
               letterSpacing: -0.5,
             ),
@@ -371,10 +510,11 @@ class ExamScoreComparisonLineChart extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             label,
+            textAlign: TextAlign.center,
             style: TextStyle(
-              color: AppColors.textGray,
+              color: Colors.grey[600],
               fontSize: 11,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
